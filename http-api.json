@@ -1,0 +1,102 @@
+[
+    {
+        "id": "62769e692c2449d6",
+        "type": "tab",
+        "label": "实现 http api 发送消息",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8cd2c104209a4dcc",
+        "type": "http in",
+        "z": "62769e692c2449d6",
+        "name": "",
+        "url": "/send_message",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 270,
+        "y": 160,
+        "wires": [
+            [
+                "804be9b2391797cb"
+            ]
+        ]
+    },
+    {
+        "id": "804be9b2391797cb",
+        "type": "template",
+        "z": "62769e692c2449d6",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"action\": \"send_message\",\n    \"data\":{\n        \"chat_id\": {{payload.chat_id}},\n        \"text\": {{payload.text}}\n    }\n}",
+        "output": "str",
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "fc4f7a4a52d6847d",
+                "6e662fd9b7ebacc8"
+            ]
+        ]
+    },
+    {
+        "id": "fc4f7a4a52d6847d",
+        "type": "websocket out",
+        "z": "62769e692c2449d6",
+        "name": "发送",
+        "server": "d57d2813420fedfb",
+        "client": "",
+        "x": 770,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "2969489cd33a4ae3",
+        "type": "http response",
+        "z": "62769e692c2449d6",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 840,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "6e662fd9b7ebacc8",
+        "type": "change",
+        "z": "62769e692c2449d6",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"status_code\": 200}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 630,
+        "y": 240,
+        "wires": [
+            [
+                "2969489cd33a4ae3"
+            ]
+        ]
+    },
+    {
+        "id": "d57d2813420fedfb",
+        "type": "websocket-listener",
+        "path": "/ws/example",
+        "wholemsg": "false"
+    }
+]
