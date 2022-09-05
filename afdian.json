@@ -1,0 +1,136 @@
+[
+    {
+        "id": "5e8440329847327e",
+        "type": "tab",
+        "label": "爱发电订单通知",
+        "disabled": false,
+        "info": "借助爱发电平台 Webhook ，发送 telegram 通知\r\n\r\nhttps://afdian.net/dashboard/dev\r\n\r\n配置 Webhook url 为\r\n\r\nhttp://x.x.x.x:1880/afdian-order\r\n",
+        "env": []
+    },
+    {
+        "id": "f9f827304e337a81",
+        "type": "http in",
+        "z": "5e8440329847327e",
+        "name": "接收爱发电 Webhook",
+        "url": "/afdian-order",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "c2fdf82f1cbde732",
+                "270faafc0952d2a8"
+            ]
+        ]
+    },
+    {
+        "id": "c2fdf82f1cbde732",
+        "type": "json",
+        "z": "5e8440329847327e",
+        "name": "格式化数据",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 450,
+        "y": 180,
+        "wires": [
+            [
+                "f81db0332f26b620",
+                "efac1eeca8cedb26"
+            ]
+        ]
+    },
+    {
+        "id": "a183d61d9738cd19",
+        "type": "http response",
+        "z": "5e8440329847327e",
+        "name": "响应 200 状态码",
+        "statusCode": "200",
+        "headers": {},
+        "x": 660,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "270faafc0952d2a8",
+        "type": "change",
+        "z": "5e8440329847327e",
+        "name": "设定回传数据",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"ec\":200,\"em\":\"ok\"}",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 100,
+        "wires": [
+            [
+                "a183d61d9738cd19"
+            ]
+        ]
+    },
+    {
+        "id": "f81db0332f26b620",
+        "type": "template",
+        "z": "5e8440329847327e",
+        "name": "由模板生成消息",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"action\": \"send_message\",\n    \"data\":{\n        \"chat_id\": -100,\n        \"text\": \"[爱发电] 有新的订单被处理，收款 {{payload.data.order.total_amount}} 元\"\n    }\n}",
+        "output": "str",
+        "x": 660,
+        "y": 180,
+        "wires": [
+            [
+                "f8483f6f486c6bc8"
+            ]
+        ]
+    },
+    {
+        "id": "f8483f6f486c6bc8",
+        "type": "websocket out",
+        "z": "5e8440329847327e",
+        "name": "pgm 发送",
+        "server": "d57d2813420fedfb",
+        "client": "",
+        "x": 860,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "efac1eeca8cedb26",
+        "type": "debug",
+        "z": "5e8440329847327e",
+        "name": "调试订单数据",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "d57d2813420fedfb",
+        "type": "websocket-listener",
+        "path": "/ws",
+        "wholemsg": "false"
+    }
+]
